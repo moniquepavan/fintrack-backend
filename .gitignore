@@ -39,3 +39,8 @@ build/
 .DS_Store
 
 fintrack-frontend/
+
+### Secrets ###
+application-local.yml
+application-local.properties
+.env
