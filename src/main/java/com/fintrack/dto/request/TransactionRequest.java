@@ -26,7 +26,9 @@ public class TransactionRequest {
     private LocalDate transactionDate;
 
     private UUID categoryId;
+    private UUID cardId;
     private boolean isRecurring;
+    private boolean updateFollowing;
     private String recurrenceRule;
     private String paymentMethod;
     private Integer installmentTotal;

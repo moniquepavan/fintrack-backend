@@ -17,6 +17,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 
     List<Transaction> findByUserIdOrderByTransactionDateDesc(UUID userId);
 
+    List<Transaction> findByInstallmentGroupIdAndInstallmentNumberGreaterThanEqualOrderByInstallmentNumberAsc(
+            UUID installmentGroupId, int installmentNumber);
+
     List<Transaction> findByUserIdAndTransactionDateBetweenOrderByTransactionDateDesc(
             UUID userId, LocalDate start, LocalDate end);
 

@@ -1,5 +1,6 @@
 package com.fintrack.service;
 
+import com.fintrack.domain.Card;
 import com.fintrack.domain.Category;
 import com.fintrack.domain.Transaction;
 import com.fintrack.domain.User;
@@ -7,6 +8,7 @@ import com.fintrack.domain.enums.TransactionType;
 import com.fintrack.dto.request.TransactionRequest;
 import com.fintrack.dto.response.DashboardResponse;
 import com.fintrack.dto.response.TransactionResponse;
+import com.fintrack.repository.CardRepository;
 import com.fintrack.repository.CategoryRepository;
 import com.fintrack.repository.TransactionRepository;
 import com.fintrack.repository.UserRepository;
@@ -27,6 +29,7 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final CategoryRepository categoryRepository;
+    private final CardRepository cardRepository;
     private final UserRepository userRepository;
 
     public List<TransactionResponse> findAll() {
@@ -107,6 +110,12 @@ public class TransactionService {
                     .orElseThrow(() -> new RuntimeException("Categoria nao encontrada"));
         }
 
+        Card card = null;
+        if (request.getCardId() != null) {
+            card = cardRepository.findById(request.getCardId())
+                    .orElseThrow(() -> new RuntimeException("Cartao nao encontrado"));
+        }
+
         List<Transaction> saved = new ArrayList<>();
 
         if (request.getInstallmentTotal() != null && request.getInstallmentTotal() > 1) {
@@ -118,6 +127,7 @@ public class TransactionService {
                 Transaction t = Transaction.builder()
                         .user(user)
                         .category(category)
+                        .card(card)
                         .description(request.getDescription())
                         .amount(installmentAmount)
                         .type(request.getType())
@@ -134,6 +144,7 @@ public class TransactionService {
             Transaction t = Transaction.builder()
                     .user(user)
                     .category(category)
+                    .card(card)
                     .description(request.getDescription())
                     .amount(request.getAmount())
                     .type(request.getType())
@@ -163,11 +174,35 @@ public class TransactionService {
                     .orElseThrow(() -> new RuntimeException("Categoria nao encontrada"));
         }
 
+        Card card = null;
+        if (request.getCardId() != null) {
+            card = cardRepository.findById(request.getCardId())
+                    .orElseThrow(() -> new RuntimeException("Cartao nao encontrado"));
+        }
+
+        if (request.isUpdateFollowing() && transaction.getInstallmentGroupId() != null) {
+            List<Transaction> following = transactionRepository
+                    .findByInstallmentGroupIdAndInstallmentNumberGreaterThanEqualOrderByInstallmentNumberAsc(
+                            transaction.getInstallmentGroupId(), transaction.getInstallmentNumber());
+
+            for (Transaction t : following) {
+                t.setDescription(request.getDescription());
+                t.setAmount(request.getAmount());
+                t.setType(request.getType());
+                t.setCategory(category);
+                t.setCard(card);
+                t.setPaymentMethod(request.getPaymentMethod());
+                transactionRepository.save(t);
+            }
+            return TransactionResponse.fromEntity(following.get(0));
+        }
+
         transaction.setDescription(request.getDescription());
         transaction.setAmount(request.getAmount());
         transaction.setType(request.getType());
         transaction.setTransactionDate(request.getTransactionDate());
         transaction.setCategory(category);
+        transaction.setCard(card);
         transaction.setRecurring(request.isRecurring());
         transaction.setRecurrenceRule(request.getRecurrenceRule());
         transaction.setPaymentMethod(request.getPaymentMethod());

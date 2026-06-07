@@ -32,6 +32,10 @@ public class Transaction {
     @JoinColumn(name = "category_id")
     private Category category;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "card_id")
+    private Card card;
+
     @Column(nullable = false, length = 200)
     private String description;
 

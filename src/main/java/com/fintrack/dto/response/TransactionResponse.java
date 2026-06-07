@@ -23,6 +23,8 @@ public class TransactionResponse {
     private String categoryName;
     private String categoryColor;
     private String categoryIcon;
+    private UUID cardId;
+    private String cardName;
     private boolean isRecurring;
     private String recurrenceRule;
     private String paymentMethod;
@@ -49,6 +51,11 @@ public class TransactionResponse {
                     .categoryName(transaction.getCategory().getName())
                     .categoryColor(transaction.getCategory().getColor())
                     .categoryIcon(transaction.getCategory().getIcon());
+        }
+
+        if (transaction.getCard() != null) {
+            builder.cardId(transaction.getCard().getId())
+                    .cardName(transaction.getCard().getName());
         }
 
         return builder.build();
