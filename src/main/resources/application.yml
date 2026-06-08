@@ -3,9 +3,9 @@ spring:
     name: fintrack-backend
 
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/fintrack}
-    username: ${DB_USERNAME:fintrack_user}
-    password: ${DB_PASSWORD:fintrack_pass}
+    url: jdbc:postgresql://${FINTRACK_DB_HOST:localhost}:${FINTRACK_DB_PORT:5432}/${FINTRACK_DB_NAME:fintrack}
+    username: ${FINTRACK_DB_USERNAME:fintrack_user}
+    password: ${FINTRACK_DB_PASSWORD:fintrack_pass}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -23,11 +23,11 @@ spring:
     baseline-on-migrate: true
 
 server:
-  port: 8080
+  port: ${FINTRACK_SERVER_PORT:8080}
 
 jwt:
-  secret: ${JWT_SECRET:minha-chave-super-secreta-dev-trocar-em-producao-minimo-32-chars}
-  expiration: ${JWT_EXPIRATION:86400000}
+  secret: ${FINTRACK_JWT_SECRET:minha-chave-super-secreta-dev-trocar-em-producao-minimo-32-chars}
+  expiration: ${FINTRACK_JWT_EXPIRATION:86400000}
 
 cors:
-  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:4200}
+  allowed-origins: ${FINTRACK_CORS_ORIGINS:http://localhost:4200}
