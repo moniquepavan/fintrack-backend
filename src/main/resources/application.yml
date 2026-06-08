@@ -27,4 +27,7 @@ server:
 
 jwt:
   secret: ${JWT_SECRET:minha-chave-super-secreta-dev-trocar-em-producao-minimo-32-chars}
-  expiration: 86400000
+  expiration: ${JWT_EXPIRATION:86400000}
+
+cors:
+  allowed-origins: ${ALLOWED_ORIGINS:http://localhost:4200}

@@ -1,8 +1,12 @@
 package com.fintrack.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +16,8 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
+
+    private static final Logger log = LoggerFactory.getLogger(JwtUtil.class);
 
     @Value("${jwt.secret}")
     private String secret;
@@ -40,7 +46,14 @@ public class JwtUtil {
         try {
             extractClaims(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            log.debug("Token JWT expirado");
+            return false;
+        } catch (JwtException e) {
+            log.debug("Token JWT inválido: {}", e.getMessage());
+            return false;
         } catch (Exception e) {
+            log.warn("Erro inesperado ao validar token JWT: {}", e.getMessage());
             return false;
         }
     }
