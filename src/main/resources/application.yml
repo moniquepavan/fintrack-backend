@@ -3,10 +3,12 @@ spring:
     name: fintrack-backend
 
   datasource:
-    url: jdbc:postgresql://${FINTRACK_DB_HOST:localhost}:${FINTRACK_DB_PORT:5432}/${FINTRACK_DB_NAME:fintrack}
+    url: jdbc:postgresql://${FINTRACK_DB_HOST:localhost}:${FINTRACK_DB_PORT:5432}/${FINTRACK_DB_NAME:fintrack}?options=-c%20client_encoding%3DUTF8
     username: ${FINTRACK_DB_USERNAME:fintrack_user}
     password: ${FINTRACK_DB_PASSWORD:fintrack_pass}
     driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-init-sql: "SET client_encoding = 'UTF8'"
 
   jpa:
     hibernate:
@@ -24,6 +26,11 @@ spring:
 
 server:
   port: ${FINTRACK_SERVER_PORT:8080}
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+      enabled: true
 
 jwt:
   secret: ${FINTRACK_JWT_SECRET:minha-chave-super-secreta-dev-trocar-em-producao-minimo-32-chars}
